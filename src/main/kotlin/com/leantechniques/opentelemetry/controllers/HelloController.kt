@@ -3,9 +3,9 @@ package com.leantechniques.opentelemetry.controllers
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Supplier
 import kotlin.concurrent.thread
 
@@ -13,9 +13,9 @@ import kotlin.concurrent.thread
 class HelloController(
     meterRegistry: MeterRegistry,
 ) {
+    private val log = LoggerFactory.getLogger(HelloController::class.java)
     private var helloCalled: Counter? = null
     private var helloDuration: Timer? = null
-    private val activeBookCreationRequests: AtomicInteger? = null
 
     init {
         helloCalled = Counter.builder("hello.counter").register(meterRegistry)
@@ -24,6 +24,7 @@ class HelloController(
 
     @GetMapping("/hello")
     fun hello(): String {
+        log.info("Hello endpoint called")
         helloDuration?.record(
             Supplier {
                 helloCalled?.increment()
