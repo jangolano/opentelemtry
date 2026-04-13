@@ -8,20 +8,18 @@ receivers:
 
 exporters:
   debug:
-    verbosity: basic # basic, normal, detailed
-  file:
-    # path: /output/data.json
-    path: /dev/null
-    format: json
+    verbosity: basic
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
 
 service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      exporters: [ debug, file ]
+      exporters: [ debug ]
     metrics:
       receivers: [ otlp ]
-      exporters: [ debug, file ]
+      exporters: [ debug ]
     logs:
       receivers: [ otlp ]
-      exporters: [ debug, file ]
+      exporters: [ debug, otlphttp/loki ]
