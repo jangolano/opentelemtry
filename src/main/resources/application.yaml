@@ -2,6 +2,11 @@ spring:
   application:
     name: opentelemetry
 management:
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
+        aggregation-temporality: cumulative
   opentelemetry:
     logging:
       export:

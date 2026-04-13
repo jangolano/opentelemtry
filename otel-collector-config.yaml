@@ -9,17 +9,17 @@ receivers:
 exporters:
   debug:
     verbosity: basic
-  otlphttp/loki:
-    endpoint: http://loki:3100/otlp
+  otlphttp/lgtm:
+    endpoint: http://grafana:4318
 
 service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      exporters: [ debug ]
+      exporters: [ debug, otlphttp/lgtm ]
     metrics:
       receivers: [ otlp ]
-      exporters: [ debug ]
+      exporters: [ debug, otlphttp/lgtm ]
     logs:
       receivers: [ otlp ]
-      exporters: [ debug, otlphttp/loki ]
+      exporters: [ debug, otlphttp/lgtm ]

@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class OpentelemetryApplication
 
 fun main(args: Array<String>) {
-	runApplication<OpentelemetryApplication>(*args)
+    runApplication<OpentelemetryApplication>(*args)
 }
