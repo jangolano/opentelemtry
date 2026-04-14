@@ -27,7 +27,7 @@ aws ecr get-login-password --region "$REGION" | docker login --username AWS --pa
 
 # Build and push
 echo "==> Building Docker image"
-docker build -t "$IMAGE_URI" "$PROJECT_ROOT"
+docker build --platform linux/amd64 -t "$IMAGE_URI" "$PROJECT_ROOT"
 
 echo "==> Pushing image to ECR"
 docker push "$IMAGE_URI"

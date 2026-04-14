@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "otel_collector" {
 
   container_definitions = jsonencode([{
     name      = "otel-collector"
-    image     = "otel/opentelemetry-collector-contrib:latest"
+    image     = "otel/opentelemetry-collector-contrib:0.98.0"
     essential = true
     command   = ["--config=env:OTEL_COLLECTOR_CONFIG"]
     portMappings = [
@@ -18,27 +18,22 @@ resource "aws_ecs_task_definition" "otel_collector" {
     ]
     environment = [{
       name  = "OTEL_COLLECTOR_CONFIG"
-      value = yamlencode({
-        receivers = {
-          otlp = {
-            protocols = {
-              grpc = { endpoint = "0.0.0.0:4317" }
-              http = { endpoint = "0.0.0.0:4318" }
-            }
-          }
-        }
-        exporters = {
-          debug = { verbosity = "basic" }
-        }
-        service = {
-          pipelines = {
-            traces  = { receivers = ["otlp"], exporters = ["debug"] }
-            metrics = { receivers = ["otlp"], exporters = ["debug"] }
-            logs    = { receivers = ["otlp"], exporters = ["debug"] }
-          }
-        }
-      })
+      value = file("${path.module}/otel-collector-config.yaml")
     }]
+    secrets = [
+      {
+        name      = "GRAFANA_CLOUD_OTLP_ENDPOINT"
+        valueFrom = aws_ssm_parameter.grafana_cloud_otlp_endpoint.arn
+      },
+      {
+        name      = "GRAFANA_CLOUD_INSTANCE_ID"
+        valueFrom = aws_ssm_parameter.grafana_cloud_instance_id.arn
+      },
+      {
+        name      = "GRAFANA_CLOUD_API_KEY"
+        valueFrom = aws_ssm_parameter.grafana_cloud_api_key.arn
+      }
+    ]
     logConfiguration = {
       logDriver = "awslogs"
       options = {
